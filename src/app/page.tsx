@@ -22,8 +22,6 @@ export default async function Home() {
       ) : (
         <p>Not signed in</p>
       )}
-
-      <Profile />
     </div>
   );
 }
