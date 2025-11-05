@@ -19,7 +19,7 @@ export const { handlers: { GET, POST }, auth, signOut, signIn } = NextAuth({
     }),
   ],
   callbacks: {
-    async session({ session, user }: any) {
+    async session({ session, user }: any) { // eslint-disable-line
       if (session && user) {
         session.user.id = user.id;
       }
