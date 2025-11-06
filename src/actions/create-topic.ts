@@ -1,7 +1,12 @@
 'use server';
 
 import { z } from 'zod';
+import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
+import type { Topic } from '@prisma/client';
+import { db } from '@/db';
+import paths from '@/paths';
+import { revalidatePath } from 'next/cache';
 
 const createTopicSchema = z.object({
   name: z.string().min(3).regex(/^[a-z-]+$/, { message: 'Only lowercase letters and hyphens are allowed' }),
@@ -40,7 +45,29 @@ export async function createTopic(
     };
   }
 
-  return { errors: {} };
-
-  // TODO: revalidate the homepage after creating a topic
+  let topic: Topic;
+  try {
+    topic = await db.topic.create({
+      data: {
+        slug: result.data.name,
+        description: result.data.description,
+      }
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return {
+        errors: {
+          _form: ['Failed to create topic. Please try again.']
+        }
+      };
+    } else {
+      return {
+        errors: {
+          _form: ['An unknown error occurred. Please try again.']
+        }
+      };
+    }
+  }
+  revalidatePath('/');
+  redirect(paths.topicShow(topic.slug));
 };
