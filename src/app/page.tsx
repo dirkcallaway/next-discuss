@@ -4,6 +4,9 @@ import { Divider } from '@nextui-org/react'
 import PostList from '@/components/posts/post-list';
 import { fetchTopPosts } from '@/db/queries/posts';
 
+// Force dynamic rendering and disable caching
+export const dynamic = 'force-dynamic';
+
 export default function Home() {
   return (
     <div className="grid grid-cols-4 gap-4 p-4"> 
